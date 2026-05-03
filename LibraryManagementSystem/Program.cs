@@ -1,4 +1,5 @@
 ﻿using LibraryManagementSystem.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Session support (needed for login)
+// Configure Cookie Authentication (for "LibraryCookie" scheme)
+builder.Services.AddAuthentication("LibraryCookie")
+    .AddCookie("LibraryCookie", options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.SlidingExpiration = true;
+    });
+
+// Add Session support
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -58,9 +70,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Use Session (MUST be before UseAuthorization)
 app.UseSession();
 
+// IMPORTANT: Authentication MUST come before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
