@@ -1,0 +1,414 @@
+﻿@using System.Security.Claims
+
+@{
+    // Get user info from authentication
+    var isLoggedIn = User.Identity != null && User.Identity.IsAuthenticated;
+    var userName = User.Identity?.Name ?? "";
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "";
+    var isLibrarian = userRole == "Librarian";
+    var isMember = userRole == "Member";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Management System</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LibraryManagementSystem.styles.css" asp-append-version="true" />
+
+    <!-- Custom Styles -->
+    <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            /* ===== Navbar Styles ===== */
+            .navbar-custom {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                padding: 10px 0;
+            }
+
+                .navbar-custom .navbar-brand {
+                    color: white !important;
+                    font-weight: bold;
+                    font-size: 1.6rem;
+                    transition: transform 0.3s ease;
+                }
+
+                    .navbar-custom .navbar-brand:hover {
+                        transform: scale(1.05);
+                    }
+
+                .navbar-custom .nav-link {
+                    color: rgba(255,255,255,0.9) !important;
+                    font-weight: 500;
+                    padding: 8px 12px !important;
+                    border-radius: 8px;
+                    margin: 0 2px;
+                    transition: all 0.3s ease;
+                    font-size: 0.95rem;
+                }
+
+                    .navbar-custom .nav-link:hover {
+                        background-color: rgba(255,255,255,0.15);
+                        color: white !important;
+                        transform: translateY(-2px);
+                    }
+
+                    .navbar-custom .nav-link.active {
+                        background-color: rgba(255,255,255,0.2);
+                        color: white !important;
+                    }
+
+            /* ===== Button Styles ===== */
+            .btn-login, .btn-logout {
+                background-color: white;
+                color: #1e3c72 !important;
+                font-weight: bold;
+                border-radius: 25px;
+                padding: 8px 20px;
+                transition: all 0.3s ease;
+                border: 2px solid white;
+                white-space: nowrap;
+            }
+
+                .btn-login:hover, .btn-logout:hover {
+                    background-color: transparent;
+                    color: white !important;
+                    border: 2px solid white;
+                }
+
+            .btn-register {
+                background-color: transparent;
+                color: white !important;
+                font-weight: bold;
+                border: 2px solid white;
+                border-radius: 25px;
+                padding: 8px 20px;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+            }
+
+                .btn-register:hover {
+                    background-color: white;
+                    color: #1e3c72 !important;
+                }
+
+            /* ===== User Badge Styles ===== */
+            .user-badge {
+                background: rgba(255,255,255,0.2);
+                color: white;
+                padding: 6px 15px;
+                border-radius: 25px;
+                font-weight: 500;
+                margin-right: 10px;
+                border: 1px solid rgba(255,255,255,0.3);
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.9rem;
+            }
+
+            .role-badge-librarian {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white;
+                padding: 3px 10px;
+                border-radius: 15px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                margin-left: 8px;
+            }
+
+            .role-badge-member {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                color: white;
+                padding: 3px 10px;
+                border-radius: 15px;
+                font-size: 0.7rem;
+                font-weight: bold;
+                margin-left: 8px;
+            }
+
+            /* ===== Footer Styles ===== */
+            .footer-custom {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: white;
+                padding: 30px 0;
+                margin-top: 50px;
+            }
+
+                .footer-custom a {
+                    color: rgba(255,255,255,0.8);
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                }
+
+                    .footer-custom a:hover {
+                        color: white;
+                        text-decoration: underline;
+                    }
+
+                .footer-custom h5 {
+                    font-weight: bold;
+                    margin-bottom: 15px;
+                }
+
+            /* ===== Card Animations ===== */
+            .card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+                .card:hover {
+                    transform: translateY(-5px);
+                }
+
+            /* ===== Main Content ===== */
+            main {
+                min-height: calc(100vh - 200px);
+            }
+
+            /* ===== Mobile Responsive ===== */
+            @@media (max-width: 991px) {
+                .user-badge {
+                    margin: 5px 0;
+                    display: block;
+                    text-align: center;
+                }
+            
+                .btn-login, .btn-logout, .btn-register {
+                    margin: 5px 0;
+                    display: block;
+                    text-align: center;
+                }
+
+                .navbar-custom .nav-link {
+                    padding: 10px 15px !important;
+                }
+            }
+
+            /* ===== Scrollbar Styling ===== */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                border-radius: 5px;
+            }
+
+                ::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(135deg, #2a5298, #1e3c72);
+                }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+            <div class="container-fluid px-4">
+                <!-- ===== Logo/Brand ===== -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    📚 LibraryMS
+                </a>
+
+                <!-- ===== Mobile Toggle ===== -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- ===== Navigation Links ===== -->
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    
+                    <!-- ===== Left Side Menu ===== -->
+                    <ul class="navbar-nav flex-grow-1 ms-4">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                🏠 Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Books" asp-action="Index">
+                                📖 Books
+                            </a>
+                        </li>
+
+                        @if (isLibrarian)
+                        {
+                            <!-- ===== 👨‍💼 LIBRARIAN MENU ===== -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Librarian" asp-action="Dashboard">
+                                    📊 Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Librarian" asp-action="Members">
+                                    👥 Members
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Borrowing" asp-action="Manage">
+                                    ⚙️ Manage Borrowings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Borrowing" asp-action="Policy">
+                                    📜 Policy
+                                </a>
+                            </li>
+                        }
+
+                        @if (isMember)
+                        {
+                            <!-- ===== 👤 MEMBER MENU ===== -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Member" asp-action="Dashboard">
+                                    📊 Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Borrowing" asp-action="Index">
+                                    🔖 My Borrowings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Borrowing" asp-action="Reservations">
+                                    📅 Reservations
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Member" asp-action="History">
+                                    📜 History
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Member" asp-action="Profile">
+                                    👤 Profile
+                                </a>
+                            </li>
+                        }
+
+                        @if (!isLoggedIn)
+                        {
+                            <!-- ===== 🌐 GUEST MENU ===== -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Borrowing" asp-action="Policy">
+                                    📜 Policy
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- ===== Right Side - User Actions ===== -->
+                    <ul class="navbar-nav align-items-center">
+                        @if (isLoggedIn)
+                        {
+                            <!-- ===== User Info Badge ===== -->
+                            <li class="nav-item">
+                                <div class="user-badge">
+                                    👋&nbsp;Hi,&nbsp;<strong>@userName</strong>
+                                    @if (isLibrarian)
+                                    {
+                                        <span class="role-badge-librarian">👨‍💼 Librarian</span>
+                                    }
+                                    else if (isMember)
+                                    {
+                                        <span class="role-badge-member">👤 Member</span>
+                                    }
+                                </div>
+                            </li>
+
+                            <!-- ===== Logout Button ===== -->
+                            <li class="nav-item">
+                                <a class="btn btn-logout" asp-controller="Account" asp-action="Logout">
+                                    🚪 Logout
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- ===== Login Button ===== -->
+                            <li class="nav-item me-2">
+                                <a class="btn btn-login" asp-controller="Account" asp-action="Login">
+                                    🔐 Login
+                                </a>
+                            </li>
+
+                            <!-- ===== Register Button ===== -->
+                            <li class="nav-item">
+                                <a class="btn btn-register" asp-controller="Account" asp-action="Register">
+                                    ✍️ Register
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== Main Content ===== -->
+    <div class="container-fluid px-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- ===== Footer ===== -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3 text-center text-md-start">
+                    <h5>📚 LibraryMS</h5>
+                    <p class="mb-1">Your Gateway to Knowledge</p>
+                    <p class="mb-0"><small>Empowering readers, one book at a time.</small></p>
+                </div>
+                <div class="col-md-4 mb-3 text-center">
+                    <h5>🔗 Quick Links</h5>
+                    <p class="mb-1">
+                        <a asp-controller="Home" asp-action="Index">Home</a> |
+                        <a asp-controller="Books" asp-action="Index">Books</a> |
+                        <a asp-controller="Borrowing" asp-action="Policy">Policy</a>
+                    </p>
+                    @if (!isLoggedIn)
+                    {
+                        <p class="mb-0">
+                            <a asp-controller="Account" asp-action="Login">Login</a> |
+                            <a asp-controller="Account" asp-action="Register">Register</a>
+                        </p>
+                    }
+                </div>
+                <div class="col-md-4 mb-3 text-center text-md-end">
+                    <h5>📞 Contact Us</h5>
+                    <p class="mb-1">📧 info@libraryms.com</p>
+                    <p class="mb-1">📞 +1 234 567 890</p>
+                    <p class="mb-0">🏢 123 Library Street, City</p>
+                </div>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.3);" />
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 Library Management System - All Rights Reserved</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Made with ❤️ for book lovers</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== Scripts ===== -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

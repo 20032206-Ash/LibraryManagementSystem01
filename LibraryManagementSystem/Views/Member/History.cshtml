@@ -1,0 +1,84 @@
+﻿@model List<LibraryManagementSystem.Models.BorrowingTransaction>
+
+@{
+    ViewData["Title"] = "My History";
+}
+
+<div class="container mt-4 mb-5">
+
+    <!-- Header -->
+    <div class="p-4 mb-4 text-white"
+         style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 15px;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-2">📜 My Borrowing History</h1>
+                <p class="mb-0">Total Transactions: <strong>@Model.Count</strong></p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-action="Dashboard" class="btn btn-light">← Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-0">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Book Title</th>
+                                <th>Borrow Date</th>
+                                <th>Due Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Renewals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td><strong>@(item.Book?.Title ?? "N/A")</strong></td>
+                                    <td>@item.BorrowDate.ToString("dd MMM yyyy")</td>
+                                    <td>@item.DueDate.ToString("dd MMM yyyy")</td>
+                                    <td>@(item.ReturnDate?.ToString("dd MMM yyyy") ?? "Not returned")</td>
+                                    <td>
+                                        @if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Active)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Returned)
+                                        {
+                                            <span class="badge bg-secondary">Returned</span>
+                                        }
+                                        else if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Overdue)
+                                        {
+                                            <span class="badge bg-danger">Overdue</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info">@item.Status</span>
+                                        }
+                                    </td>
+                                    <td>@item.RenewalCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center p-5">
+                    <div style="font-size: 5rem;">📭</div>
+                    <h4 class="text-muted">No History Yet</h4>
+                    <p class="text-muted">Your borrowing history will appear here.</p>
+                    <a asp-controller="Books" asp-action="Index" class="btn btn-success">Start Borrowing</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

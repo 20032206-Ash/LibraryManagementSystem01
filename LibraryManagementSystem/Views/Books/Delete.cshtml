@@ -1,0 +1,54 @@
+﻿@model LibraryManagementSystem.Models.Book
+
+@{
+    ViewData["Title"] = "Delete Book";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                
+                <!-- Header -->
+                <div class="card-header text-center text-white py-4 border-0"
+                     style="background: linear-gradient(135deg, #f5576c, #c73659);">
+                    <div style="font-size: 5rem;">⚠️</div>
+                    <h2 class="fw-bold">Delete Book?</h2>
+                    <p class="mb-0">This action cannot be undone!</p>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-5">
+                    <p class="lead text-center mb-4">Are you sure you want to delete this book?</p>
+                    
+                    <div class="alert alert-warning" style="border-radius: 10px;">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div style="font-size: 4rem;">📖</div>
+                            </div>
+                            <div class="col-md-8">
+                                <h5 class="fw-bold">@Model.Title</h5>
+                                <p class="mb-1"><strong>Author:</strong> @Model.Author</p>
+                                <p class="mb-1"><strong>Genre:</strong> @(Model.Genre ?? "N/A")</p>
+                                <p class="mb-1"><strong>ISBN:</strong> @(Model.ISBN ?? "N/A")</p>
+                                <p class="mb-0"><strong>Available:</strong> @Model.AvailableCopies copies</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg py-3" style="border-radius: 10px;">
+                                🗑️ Yes, Delete This Book
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary btn-lg" style="border-radius: 10px;">
+                                ← Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

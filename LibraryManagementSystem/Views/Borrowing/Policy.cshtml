@@ -1,0 +1,190 @@
+﻿@model LibraryManagementSystem.Models.BorrowingPolicy
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Borrowing Policy";
+    var isLibrarian = User.FindFirst(ClaimTypes.Role)?.Value == "Librarian";
+}
+
+<div class="container mt-4 mb-5">
+
+    <!-- Hero Header -->
+    <div class="p-5 mb-4 text-white text-center"
+         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <div style="font-size: 5rem;">📜</div>
+        <h1 class="display-4 fw-bold">Library Borrowing Policy</h1>
+        <p class="lead mb-0">Rules and guidelines for borrowing books</p>
+    </div>
+
+    <!-- Alert -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            ✅ @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Current Policy Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 15px;">
+                <div class="card-body p-4" style="background: linear-gradient(135deg, #11998e, #38ef7d); color: white; border-radius: 15px;">
+                    <div style="font-size: 3.5rem;">⏰</div>
+                    <h2 class="fw-bold mb-0">@Model.LoanDurationDays</h2>
+                    <p class="mb-0">Days Loan Period</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 15px;">
+                <div class="card-body p-4" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px;">
+                    <div style="font-size: 3.5rem;">📚</div>
+                    <h2 class="fw-bold mb-0">@Model.MaxBooksPerMember</h2>
+                    <p class="mb-0">Books Per Member</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 15px;">
+                <div class="card-body p-4" style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border-radius: 15px;">
+                    <div style="font-size: 3.5rem;">🔄</div>
+                    <h2 class="fw-bold mb-0">@Model.MaxRenewals</h2>
+                    <p class="mb-0">Max Renewals</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100 text-center" style="border-radius: 15px;">
+                <div class="card-body p-4" style="background: linear-gradient(135deg, #f5576c, #c73659); color: white; border-radius: 15px;">
+                    <div style="font-size: 3.5rem;">💰</div>
+                    <h2 class="fw-bold mb-0">₹@Model.FinePerDay</h2>
+                    <p class="mb-0">Fine Per Day</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Policy Details -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold">📖 Borrowing Rules</h3>
+                    <hr />
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">✅</span>
+                            <strong>Loan Duration:</strong> You can keep each book for <strong>@Model.LoanDurationDays days</strong>.
+                        </li>
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">✅</span>
+                            <strong>Book Limit:</strong> Maximum <strong>@Model.MaxBooksPerMember books</strong> can be borrowed at a time.
+                        </li>
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">✅</span>
+                            <strong>Renewals:</strong> Each book can be renewed up to <strong>@Model.MaxRenewals times</strong>.
+                        </li>
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">✅</span>
+                            <strong>Reservations:</strong> Reserve books that are currently unavailable.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold">⚠️ Important Notes</h3>
+                    <hr />
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">💰</span>
+                            <strong>Late Returns:</strong> ₹@Model.FinePerDay fine per day for overdue books.
+                        </li>
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">📅</span>
+                            <strong>Return on Time:</strong> Please return books by the due date.
+                        </li>
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">🔄</span>
+                            <strong>Renewal Before Due:</strong> Renew books before due date if needed.
+                        </li>
+                        <li class="mb-3">
+                            <span style="font-size: 1.5rem;">📖</span>
+                            <strong>Take Care:</strong> Handle books with care. Damaged books will incur charges.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librarian Edit Form -->
+    @if (isLibrarian)
+    {
+        <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="card-header text-white p-4 border-0"
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px 20px 0 0;">
+                <h3 class="fw-bold mb-0">⚙️ Update Policy Settings</h3>
+                <small>Only librarians can update these values</small>
+            </div>
+            <div class="card-body p-5">
+                <form method="post" asp-action="Policy">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">⏰ Loan Duration (Days)</label>
+                            <input asp-for="LoanDurationDays" type="number" min="1" max="60"
+                                   class="form-control form-control-lg" required
+                                   style="border-radius: 10px;" />
+                            <small class="text-muted">How many days can members keep a book?</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">📚 Max Books Per Member</label>
+                            <input asp-for="MaxBooksPerMember" type="number" min="1" max="20"
+                                   class="form-control form-control-lg" required
+                                   style="border-radius: 10px;" />
+                            <small class="text-muted">Maximum books a member can borrow at once</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">🔄 Max Renewals</label>
+                            <input asp-for="MaxRenewals" type="number" min="0" max="10"
+                                   class="form-control form-control-lg" required
+                                   style="border-radius: 10px;" />
+                            <small class="text-muted">How many times can a book be renewed?</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">💰 Fine Per Day (₹)</label>
+                            <input asp-for="FinePerDay" type="number" step="0.01" min="0" max="100"
+                                   class="form-control form-control-lg" required
+                                   style="border-radius: 10px;" />
+                            <small class="text-muted">Amount charged per day for overdue books</small>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-lg text-white fw-bold py-3 px-5"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; border: none;">
+                            💾 Update Policy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center" style="border-radius: 15px;">
+            <div style="font-size: 2rem;">ℹ️</div>
+            <p class="mb-0">These policies are set by the library administration. Contact a librarian for more information.</p>
+        </div>
+    }
+
+</div>

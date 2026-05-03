@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 text-white mt-3"
+     style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;">
+    <div class="container position-relative" style="z-index: 2;">
+        <h1 class="display-3 fw-bold mb-3">📚 Library Management System</h1>
+        <p class="lead fs-4 mb-4">Your Gateway to Knowledge and Learning</p>
+        <hr class="my-4" style="border-color: rgba(255,255,255,0.3); width: 50%; margin: auto;" />
+        <p class="fs-5 mt-4">Browse thousands of books, manage your borrowings, and reserve your favorites.</p>
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <a class="btn btn-light btn-lg mt-3 px-5 py-3 fw-bold"
+                   asp-controller="Books" asp-action="Index"
+                   style="border-radius: 50px;">
+                📖 Browse Books →
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-light btn-lg mt-3 px-5 py-3 fw-bold"
+                   asp-controller="Account" asp-action="Login"
+                   style="border-radius: 50px;">
+                Get Started →
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="row mt-5 g-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center shadow-sm border-0 p-4" style="border-radius: 15px;">
+            <div style="font-size: 3rem;">📖</div>
+            <h3 class="fw-bold text-primary">10,000+</h3>
+            <p class="text-muted mb-0">Books Available</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center shadow-sm border-0 p-4" style="border-radius: 15px;">
+            <div style="font-size: 3rem;">👥</div>
+            <h3 class="fw-bold text-success">5,000+</h3>
+            <p class="text-muted mb-0">Active Members</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center shadow-sm border-0 p-4" style="border-radius: 15px;">
+            <div style="font-size: 3rem;">🔖</div>
+            <h3 class="fw-bold text-warning">1,200+</h3>
+            <p class="text-muted mb-0">Reservations</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card text-center shadow-sm border-0 p-4" style="border-radius: 15px;">
+            <div style="font-size: 3rem;">📅</div>
+            <h3 class="fw-bold text-danger">24/7</h3>
+            <p class="text-muted mb-0">Online Access</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="text-center mt-5 mb-4">
+    <h2 class="fw-bold">Why Choose Us?</h2>
+    <p class="text-muted">Discover the features that make us special</p>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 15px;">
+            <div class="card-body text-center p-4">
+                <div style="font-size: 3rem;">🔍</div>
+                <h4 class="card-title mt-3">Easy Search</h4>
+                <p class="card-text text-muted">Find any book instantly with our powerful search system.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 15px;">
+            <div class="card-body text-center p-4">
+                <div style="font-size: 3rem;">⚡</div>
+                <h4 class="card-title mt-3">Quick Borrowing</h4>
+                <p class="card-text text-muted">Borrow books quickly with just a few clicks.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0" style="border-radius: 15px;">
+            <div class="card-body text-center p-4">
+                <div style="font-size: 3rem;">🎯</div>
+                <h4 class="card-title mt-3">Smart Reservations</h4>
+                <p class="card-text text-muted">Reserve books that are currently unavailable.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+@if (User.Identity == null || !User.Identity.IsAuthenticated)
+{
+    <div class="text-center p-5 mb-5"
+         style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 15px;">
+        <h2 class="fw-bold">Ready to Start Your Reading Journey?</h2>
+        <p class="lead">Join thousands of members already enjoying our library!</p>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg px-5 fw-bold mt-3"
+               style="border-radius: 50px;">
+            ✍️ Register Now →
+        </a>
+    </div>
+}

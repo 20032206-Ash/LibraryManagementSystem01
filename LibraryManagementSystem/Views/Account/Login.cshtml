@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5 mb-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #1e3c72;">🔐 Welcome Back!</h1>
+        <p class="lead text-muted">Please select your login type to continue</p>
+    </div>
+
+    <!-- Login Cards -->
+    <div class="row justify-content-center g-4">
+        
+        <!-- Librarian Login Card -->
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 h-100"
+                 style="border-radius: 20px; overflow: hidden; transition: transform 0.3s ease;">
+                <div class="card-body text-center p-5 text-white"
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    
+                    <div style="font-size: 6rem; margin-bottom: 20px;">👨‍💼</div>
+                    
+                    <h2 class="fw-bold mb-3">Librarian</h2>
+                    <p class="mb-4" style="opacity: 0.9;">
+                        Manage books, members, borrowings, and oversee library operations.
+                    </p>
+                    
+                    <ul class="list-unstyled text-start mb-4" style="padding-left: 20%;">
+                        <li class="mb-2">✅ Add/Edit/Delete Books</li>
+                        <li class="mb-2">✅ Manage Members</li>
+                        <li class="mb-2">✅ Approve Reservations</li>
+                        <li class="mb-2">✅ Track Borrowings</li>
+                    </ul>
+                    
+                    <a asp-action="LibrarianLogin" class="btn btn-light btn-lg px-5 fw-bold"
+                           style="border-radius: 30px;">
+                        Login as Librarian →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member Login Card -->
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 h-100"
+                 style="border-radius: 20px; overflow: hidden; transition: transform 0.3s ease;">
+                <div class="card-body text-center p-5 text-white"
+                     style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    
+                    <div style="font-size: 6rem; margin-bottom: 20px;">👤</div>
+                    
+                    <h2 class="fw-bold mb-3">Member</h2>
+                    <p class="mb-4" style="opacity: 0.9;">
+                        Browse, borrow, and reserve books from our vast collection.
+                    </p>
+                    
+                    <ul class="list-unstyled text-start mb-4" style="padding-left: 20%;">
+                        <li class="mb-2">✅ Browse Book Catalog</li>
+                        <li class="mb-2">✅ Borrow Books</li>
+                        <li class="mb-2">✅ Reserve Favorites</li>
+                        <li class="mb-2">✅ Track History</li>
+                    </ul>
+                    
+                    <a asp-action="MemberLogin" class="btn btn-light btn-lg px-5 fw-bold"
+                           style="border-radius: 30px;">
+                        Login as Member →
+                    </a>
+                    
+                    <div class="mt-3">
+                        <a asp-action="Register" class="text-white" style="text-decoration: underline;">
+                            New here? Create an Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Home Link -->
+    <div class="text-center mt-5">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg"
+               style="border-radius: 30px;">
+            ← Back to Home
+        </a>
+    </div>
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-10px);
+    }
+</style>

@@ -1,0 +1,155 @@
+﻿@model IEnumerable<LibraryManagementSystem.Models.BorrowingTransaction>
+
+@{
+    ViewData["Title"] = "Manage Borrowings";
+    var totalCount = Model.Count();
+    var activeCount = Model.Count(b => b.Status == LibraryManagementSystem.Models.BorrowingStatus.Active);
+    var returnedCount = Model.Count(b => b.Status == LibraryManagementSystem.Models.BorrowingStatus.Returned);
+    var overdueCount = Model.Count(b => b.Status == LibraryManagementSystem.Models.BorrowingStatus.Overdue);
+}
+
+<div class="container-fluid mt-4 mb-5">
+
+    <!-- Header -->
+    <div class="p-4 mb-4 text-white"
+         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-2">⚙️ Manage Borrowings</h1>
+                <p class="mb-0">View and manage all library borrowings</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-controller="Librarian" asp-action="Dashboard" class="btn btn-light btn-lg">
+                    ← Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 3rem;">📚</div>
+                    <h2 class="fw-bold text-primary">@totalCount</h2>
+                    <p class="text-muted mb-0">Total Borrowings</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 3rem;">🔖</div>
+                    <h2 class="fw-bold text-success">@activeCount</h2>
+                    <p class="text-muted mb-0">Active</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 3rem;">✅</div>
+                    <h2 class="fw-bold text-secondary">@returnedCount</h2>
+                    <p class="text-muted mb-0">Returned</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body text-center p-4">
+                    <div style="font-size: 3rem;">⚠️</div>
+                    <h2 class="fw-bold text-danger">@overdueCount</h2>
+                    <p class="text-muted mb-0">Overdue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Borrowings Table -->
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-header bg-white border-0 py-3">
+            <h4 class="fw-bold mb-0">📋 All Borrowings</h4>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Book</th>
+                                <th>Member ID</th>
+                                <th>Borrow Date</th>
+                                <th>Due Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Renewals</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>#@item.Id</td>
+                                    <td>
+                                        <strong>@(item.Book?.Title ?? "N/A")</strong>
+                                        <br />
+                                        <small class="text-muted">@(item.Book?.Author ?? "N/A")</small>
+                                    </td>
+                                    <td><small>@item.MemberId</small></td>
+                                    <td>@item.BorrowDate.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        @item.DueDate.ToString("dd MMM yyyy")
+                                        @if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Active && item.DueDate < DateTime.Now)
+                                        {
+                                            <span class="badge bg-danger ms-1">Late!</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.ReturnDate != null)
+                                        {
+                                            @item.ReturnDate.Value.ToString("dd MMM yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Active)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Returned)
+                                        {
+                                            <span class="badge bg-secondary">Returned</span>
+                                        }
+                                        else if (item.Status == LibraryManagementSystem.Models.BorrowingStatus.Overdue)
+                                        {
+                                            <span class="badge bg-danger">Overdue</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info">@item.Status</span>
+                                        }
+                                    </td>
+                                    <td>@item.RenewalCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center p-5">
+                    <div style="font-size: 5rem;">📭</div>
+                    <h4 class="text-muted">No Borrowings Yet</h4>
+                    <p class="text-muted">Borrowings will appear here when members start borrowing books.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

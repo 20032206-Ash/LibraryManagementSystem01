@@ -1,0 +1,327 @@
+﻿@model IEnumerable<LibraryManagementSystem.Models.Book>
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Books";
+    var isLibrarian = User.FindFirst(ClaimTypes.Role)?.Value == "Librarian";
+    var isMember = User.FindFirst(ClaimTypes.Role)?.Value == "Member";
+    var isLoggedIn = User.Identity != null && User.Identity.IsAuthenticated;
+    var genres = ViewBag.Genres as List<string> ?? new List<string>();
+}
+
+<div class="container-fluid mt-4 mb-5">
+
+    <!-- Page Header -->
+    <div class="p-4 mb-4 text-white"
+         style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 15px;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold mb-2">📚 Book Catalog</h1>
+                <p class="lead mb-0">Browse and reserve books from our collection</p>
+            </div>
+            <div class="col-md-4 text-end">
+                @if (isLibrarian)
+                {
+                    <a asp-action="Create" class="btn btn-light btn-lg">
+                        ➕ Add New Book
+                    </a>
+                }
+                <div style="font-size: 4rem;">📖</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ✅ @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ❌ @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            ⚠️ @TempData["Warning"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Info"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            ℹ️ @TempData["Info"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Search & Filter Bar -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <form method="get" asp-action="Index">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">🔍 Search Books</label>
+                        <input type="text" name="searchTerm" value="@ViewBag.SearchTerm"
+                               class="form-control form-control-lg"
+                               placeholder="Search by title, author, or ISBN..."
+                               style="border-radius: 10px;" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">📂 Filter by Genre</label>
+                        <select name="genre" class="form-control form-control-lg" style="border-radius: 10px;">
+                            <option value="All">All Genres</option>
+                            @foreach (var g in genres)
+                            {
+                                if (ViewBag.SelectedGenre as string == g)
+                                {
+                                    <option value="@g" selected>@g</option>
+                                }
+                                else
+                                {
+                                    <option value="@g">@g</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" style="border-radius: 10px;">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Multiple Reservation Form (Members Only) -->
+    @if (isMember && Model.Any())
+    {
+        <form method="post" asp-controller="Borrowing" asp-action="ReserveMultiple" id="reserveForm">
+            
+            <!-- Bulk Action Bar -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px; background: linear-gradient(135deg, #11998e, #38ef7d); color: white;">
+                <div class="card-body p-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0">📖 Total Books: <strong>@Model.Count()</strong></h5>
+                            <small>Selected: <span id="selectedCount">0</span> book(s)</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="submit" class="btn btn-light btn-lg fw-bold" id="reserveBtn" disabled>
+                                🎯 Reserve Selected Books
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Grid -->
+            <div class="row g-4">
+                @foreach (var book in Model)
+                {
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm book-card" style="border-radius: 15px; overflow: hidden;">
+
+                            <!-- Book Header -->
+                            <div class="text-center p-4"
+                                 style="background: linear-gradient(135deg, @(book.AvailableCopies > 0 ? "#11998e, #38ef7d" : "#f5576c, #c73659")); color: white;">
+                                <div style="font-size: 4rem;">📖</div>
+                            </div>
+
+                            <div class="card-body p-3">
+                                <!-- Member Checkbox -->
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" name="selectedBookIds" value="@book.Id"
+                                           class="form-check-input book-checkbox" id="book-@book.Id" />
+                                    <label class="form-check-label small" for="book-@book.Id">
+                                        Select for reservation
+                                    </label>
+                                </div>
+
+                                <!-- Book Info -->
+                                <h5 class="fw-bold mb-1">@book.Title</h5>
+                                <p class="text-muted mb-2">
+                                    <small>✍️ @book.Author</small>
+                                </p>
+                                <div class="mb-2">
+                                    @if (!string.IsNullOrEmpty(book.Genre))
+                                    {
+                                        <span class="badge bg-info">@book.Genre</span>
+                                    }
+                                    @if (book.AvailableCopies > 0)
+                                    {
+                                        <span class="badge bg-success">@book.AvailableCopies Available</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    }
+                                </div>
+                                <p class="text-muted small mb-3">
+                                    ISBN: @book.ISBN
+                                </p>
+
+                                <!-- Actions -->
+                                <div class="d-grid gap-2">
+                                    @if (book.AvailableCopies > 0)
+                                    {
+                                        <a href="/Borrowing/Borrow?bookId=@book.Id"
+                                               class="btn btn-success btn-sm">
+                                            📖 Borrow Now
+                                        </a>
+                                    }
+                                    <a href="/Borrowing/Reserve?bookId=@book.Id"
+                                           class="btn btn-warning btn-sm text-white">
+                                        📅 Reserve
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
+    }
+    else if (isLibrarian && Model.Any())
+    {
+        <!-- Librarian View -->
+        <div class="row g-4">
+            @foreach (var book in Model)
+            {
+                <div class="col-md-4 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm book-card" style="border-radius: 15px; overflow: hidden;">
+                        <div class="text-center p-4"
+                             style="background: linear-gradient(135deg, @(book.AvailableCopies > 0 ? "#11998e, #38ef7d" : "#f5576c, #c73659")); color: white;">
+                            <div style="font-size: 4rem;">📖</div>
+                        </div>
+                        <div class="card-body p-3">
+                            <h5 class="fw-bold mb-1">@book.Title</h5>
+                            <p class="text-muted mb-2">
+                                <small>✍️ @book.Author</small>
+                            </p>
+                            <div class="mb-2">
+                                @if (!string.IsNullOrEmpty(book.Genre))
+                                {
+                                    <span class="badge bg-info">@book.Genre</span>
+                                }
+                                @if (book.AvailableCopies > 0)
+                                {
+                                    <span class="badge bg-success">@book.AvailableCopies Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                }
+                            </div>
+                            <p class="text-muted small mb-3">
+                                ISBN: @book.ISBN
+                            </p>
+                            <div class="d-grid gap-2">
+                                <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-primary btn-sm">
+                                    ✏️ Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-danger btn-sm">
+                                    🗑️ Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (!isLoggedIn && Model.Any())
+    {
+        <!-- Guest View -->
+        <div class="row g-4">
+            @foreach (var book in Model)
+            {
+                <div class="col-md-4 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm book-card" style="border-radius: 15px; overflow: hidden;">
+                        <div class="text-center p-4"
+                             style="background: linear-gradient(135deg, @(book.AvailableCopies > 0 ? "#11998e, #38ef7d" : "#f5576c, #c73659")); color: white;">
+                            <div style="font-size: 4rem;">📖</div>
+                        </div>
+                        <div class="card-body p-3">
+                            <h5 class="fw-bold mb-1">@book.Title</h5>
+                            <p class="text-muted mb-2">
+                                <small>✍️ @book.Author</small>
+                            </p>
+                            <div class="mb-2">
+                                @if (!string.IsNullOrEmpty(book.Genre))
+                                {
+                                    <span class="badge bg-info">@book.Genre</span>
+                                }
+                                @if (book.AvailableCopies > 0)
+                                {
+                                    <span class="badge bg-success">@book.AvailableCopies Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                }
+                            </div>
+                            <p class="text-muted small mb-3">
+                                ISBN: @book.ISBN
+                            </p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-sm w-100">
+                                🔐 Login to Borrow
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- No Books Found -->
+        <div class="text-center p-5 card border-0 shadow-sm" style="border-radius: 15px;">
+            <div style="font-size: 5rem;">📭</div>
+            <h3 class="text-muted">No Books Found</h3>
+            <p class="text-muted">Try adjusting your search or filter</p>
+            <div>
+                <a asp-action="Index" class="btn btn-primary">Clear Filters</a>
+            </div>
+        </div>
+    }
+
+</div>
+
+<style>
+    .book-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.book-checkbox');
+        const reserveBtn = document.getElementById('reserveBtn');
+        const selectedCount = document.getElementById('selectedCount');
+
+        if (checkboxes.length > 0) {
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', updateSelection);
+            });
+        }
+
+        function updateSelection() {
+            const checked = document.querySelectorAll('.book-checkbox:checked').length;
+            if (selectedCount) selectedCount.textContent = checked;
+            if (reserveBtn) reserveBtn.disabled = checked === 0;
+        }
+    });
+</script>

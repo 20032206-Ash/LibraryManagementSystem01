@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Librarian Login";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                
+                <!-- Header -->
+                <div class="card-header text-center text-white border-0 py-4"
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div style="font-size: 4rem;">👨‍💼</div>
+                    <h2 class="fw-bold mb-0">Librarian Login</h2>
+                    <p class="mb-0 mt-2" style="opacity: 0.9;">Access your management dashboard</p>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-5">
+                    
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center" role="alert">
+                            ⚠️ @ViewBag.Error
+                        </div>
+                    }
+
+                    <form method="post" asp-action="LibrarianLogin">
+                        <!-- Email -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                📧 Email Address
+                            </label>
+                            <input type="email" name="email" class="form-control form-control-lg"
+                                   placeholder="admin@library.com" required
+                                   style="border-radius: 10px;" />
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                🔒 Password
+                            </label>
+                            <input type="password" name="password" class="form-control form-control-lg"
+                                   placeholder="Enter your password" required
+                                   style="border-radius: 10px;" />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-lg w-100 text-white fw-bold py-3"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            border-radius: 10px; border: none;">
+                            Login to Dashboard →
+                        </button>
+                    </form>
+
+                    <!-- Demo Credentials -->
+                    <div class="alert alert-info mt-4" style="border-radius: 10px;">
+                        <strong>🔑 Demo Credentials:</strong><br>
+                        <small>
+                            Email: <code>admin@library.com</code><br>
+                            Password: <code>admin123</code>
+                        </small>
+                    </div>
+
+                    <!-- Back Links -->
+                    <div class="text-center mt-4">
+                        <a asp-action="Login" class="text-decoration-none">
+                            ← Back to Login Selection
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

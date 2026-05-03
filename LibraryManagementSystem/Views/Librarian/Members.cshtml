@@ -1,0 +1,93 @@
+﻿@model List<LibraryManagementSystem.Models.User>
+
+@{
+    ViewData["Title"] = "Manage Members";
+}
+
+<div class="container-fluid mt-4 mb-5">
+    
+    <!-- Header -->
+    <div class="p-4 mb-4 text-white"
+         style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 15px;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-2">👥 Manage Members</h1>
+                <p class="mb-0">Total Members: <strong>@Model.Count</strong></p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-action="Dashboard" class="btn btn-light">← Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <!-- Members Table -->
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-0">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var member in Model)
+                            {
+                                <tr>
+                                    <td>@member.Id</td>
+                                    <td><strong>@member.FullName</strong></td>
+                                    <td>@member.Email</td>
+                                    <td>@(member.PhoneNumber ?? "N/A")</td>
+                                    <td>@member.RegisteredDate.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        @if (member.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <form asp-action="ToggleMemberStatus" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@member.Id" />
+                                            <button type="submit" class="btn btn-sm @(member.IsActive ? "btn-warning" : "btn-success")">
+                                                @(member.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
+                                        <a asp-action="DeleteMember" asp-route-id="@member.Id"
+                                           class="btn btn-sm btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center p-5">
+                    <div style="font-size: 5rem;">👤</div>
+                    <h4 class="text-muted">No Members Yet</h4>
+                    <p class="text-muted">Members will appear here when they register.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>

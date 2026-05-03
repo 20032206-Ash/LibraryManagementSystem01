@@ -1,0 +1,109 @@
+﻿@model LibraryManagementSystem.Models.User
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                
+                <!-- Header -->
+                <div class="card-header text-center text-white border-0 py-4"
+                     style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <div style="font-size: 4rem;">✍️</div>
+                    <h2 class="fw-bold mb-0">Member Registration</h2>
+                    <p class="mb-0 mt-2" style="opacity: 0.9;">Join our library community today!</p>
+                </div>
+
+                <!-- Body -->
+                <div class="card-body p-5">
+                    
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger text-center" role="alert">
+                            ⚠️ @ViewBag.Error
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Register">
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                👤 Full Name <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="FullName" class="form-control form-control-lg"
+                                   placeholder="John Doe" required
+                                   style="border-radius: 10px;" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                📧 Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Email" type="email" class="form-control form-control-lg"
+                                   placeholder="your@email.com" required
+                                   style="border-radius: 10px;" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                🔒 Password <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Password" type="password" class="form-control form-control-lg"
+                                   placeholder="At least 6 characters" required
+                                   style="border-radius: 10px;" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                📱 Phone Number
+                            </label>
+                            <input asp-for="PhoneNumber" type="tel" class="form-control form-control-lg"
+                                   placeholder="1234567890"
+                                   style="border-radius: 10px;" />
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                🏠 Address
+                            </label>
+                            <textarea asp-for="Address" class="form-control form-control-lg"
+                                      rows="2" placeholder="Your address (optional)"
+                                      style="border-radius: 10px;"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-lg w-100 text-white fw-bold py-3"
+                                style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                            border-radius: 10px; border: none;">
+                            Create My Account →
+                        </button>
+                    </form>
+
+                    <!-- Login Link -->
+                    <div class="text-center mt-4">
+                        <p class="mb-0">
+                            Already have an account?
+                            <a asp-action="MemberLogin" class="fw-bold text-success">Login Here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

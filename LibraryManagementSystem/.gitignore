@@ -1,0 +1,42 @@
+# Visual Studio files
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+*.pdb
+
+# NuGet
+*.nupkg
+packages/
+
+# Rider
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+
+# User specific
+*.user
+*.userosscache
+*.sln.docstates
+
+# Publish files
+[Pp]ublish/
+PublishScripts/

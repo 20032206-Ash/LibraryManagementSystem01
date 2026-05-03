@@ -1,0 +1,103 @@
+﻿@model LibraryManagementSystem.Models.Book
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = Model.Title;
+    var isLibrarian = User.FindFirst(ClaimTypes.Role)?.Value == "Librarian";
+    var isMember = User.FindFirst(ClaimTypes.Role)?.Value == "Member";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                <div class="row g-0">
+                    
+                    <!-- Book Image Section -->
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-5"
+                         style="background: linear-gradient(135deg, @(Model.AvailableCopies > 0 ? "#11998e, #38ef7d" : "#f5576c, #c73659")); color: white;">
+                        <div style="font-size: 10rem;">📖</div>
+                    </div>
+
+                    <!-- Book Info Section -->
+                    <div class="col-md-8">
+                        <div class="card-body p-5">
+                            <h1 class="fw-bold">@Model.Title</h1>
+                            <h4 class="text-muted mb-4">by @Model.Author</h4>
+
+                            <div class="mb-3">
+                                @if (!string.IsNullOrEmpty(Model.Genre))
+                                {
+                                    <span class="badge bg-info me-2 p-2">📂 @Model.Genre</span>
+                                }
+                                @if (Model.AvailableCopies > 0)
+                                {
+                                    <span class="badge bg-success p-2">✅ @Model.AvailableCopies Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger p-2">❌ Out of Stock</span>
+                                }
+                            </div>
+
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>📖 Title:</strong></td>
+                                    <td>@Model.Title</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>✍️ Author:</strong></td>
+                                    <td>@Model.Author</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>📂 Genre:</strong></td>
+                                    <td>@(Model.Genre ?? "N/A")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>🔢 ISBN:</strong></td>
+                                    <td>@(Model.ISBN ?? "N/A")</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>📚 Available Copies:</strong></td>
+                                    <td>@Model.AvailableCopies</td>
+                                </tr>
+                            </table>
+
+                            <!-- Actions -->
+                            <div class="mt-4">
+                                @if (isMember)
+                                {
+                                    @if (Model.AvailableCopies > 0)
+                                    {
+                                        <a href="/Borrowing/Borrow?bookId=@Model.Id"
+                                               class="btn btn-success btn-lg me-2">
+                                            📖 Borrow Now
+                                        </a>
+                                    }
+                                    <a href="/Borrowing/Reserve?bookId=@Model.Id"
+                                           class="btn btn-warning btn-lg text-white me-2">
+                                        📅 Reserve
+                                    </a>
+                                }
+                                else if (isLibrarian)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@Model.Id"
+                                           class="btn btn-primary btn-lg me-2">
+                                        ✏️ Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@Model.Id"
+                                           class="btn btn-danger btn-lg me-2">
+                                        🗑️ Delete
+                                    </a>
+                                }
+                                <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                    ← Back to Books
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
