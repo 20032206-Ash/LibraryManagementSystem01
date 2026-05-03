@@ -10,6 +10,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add Session support (needed for login)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Add HttpContext accessor
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Auto-create database on startup (Azure Fix)
@@ -43,7 +55,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
+// Use Session (MUST be before UseAuthorization)
+app.UseSession();
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
